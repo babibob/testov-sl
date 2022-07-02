@@ -1,0 +1,43 @@
+version : '3.9'
+services:
+
+  php:
+    image: php:8.1-rc-fpm-alpine
+    volumes:
+    - ./nginx/info.php:/usr/share/nginx/html/index.php
+    networks:
+      - project
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.20-alpine
+    ports:
+    - 80:80
+    volumes:
+    - ./nginx/info.php:/usr/share/nginx/html/index.php
+    - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - php
+    environment:
+      TZ: Europe/Kiev
+    networks:
+      - project
+
+  topIP:
+    image: busybox
+    command: ["sh","-c","while true; do /root/sortIP.sh ; sleep 20; done"]
+    volumes:
+    - ./nginx/logs/access.log:/var/log/nginx/access.log:ro
+    - ./script/sortIP.sh:/root/sortIP.sh
+    depends_on:
+      - nginx
+    environment:
+      TZ: Europe/Kiev
+    networks:
+      - project
+
+networks:
+  project:
+    driver: bridge

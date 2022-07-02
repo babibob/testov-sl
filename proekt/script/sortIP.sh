@@ -1,0 +1,1 @@
+date +"%D %T" ; cat /var/log/nginx/access.log | awk '{print $1}' | uniq -c | sort -rn | head -n 10
