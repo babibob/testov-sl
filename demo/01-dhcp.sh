@@ -60,7 +60,7 @@ EOF
 # Перевіряємо кронфігурцію
 dhcpd -t -cf /etc/dhcp/dhcpd.conf
 
-# Перезапускаємо сервіс
+# Перезапускаємо сервіс isc-dhcp-server
 systemctl restart isc-dhcp-server
 systemctl status isc-dhcp-server
 

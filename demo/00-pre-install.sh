@@ -14,6 +14,9 @@ update-alternatives --set editor /usr/bin/vim.tiny
 # Додаємо "не root" користувача <usrname> в групу sudo
 usermod -aG sudo <usrname>
 
+# Додаєм присутнім в групі sudo користувачам повні права, на додаток не буде запитувати пароль
+echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 # Треба розлогінитись та залогінитись знову з підвищеними привілеями
 # Ctrl + d
 sudo su
@@ -43,3 +46,29 @@ ip route show dev enp0s8
 #    - доступ в інтернет, через брідж утворений з вашим фізичним адаптером лаптопа
 #    - доступ до Internal network, який ми вже налаштували
 
+
+#!!!!! Дві команди виконуються на локальній машині для надання ssh доступу !!!!
+# Створюєм пару ключів
+ssh-keygen -t ed25519 -C "<usrname>_key"
+
+# Копіюєм публічну частину ключа на сервер для подальшого доступу до нього
+cat ~/.ssh/id_ed25519.pub | ssh <usrname>@10.200.10.1 "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+# Альтрнативний спосіб
+# ssh-copy-id <usrname>@10.200.10.1
+
+# Під'єднуємось по ssh. важливо щоб віртуальна машина не запитувала пароль
+ssh <usrname>@10.200.10.1
+
+# Змінюємо конфігурацію ssh - 
+# Забороняємо логін по паролю
+sed PasswordAuthentication(.+)$
+
+# Забороняємо логін користувачу root
+sed -i "s/PermitRootLogin(.+)$/PermitRootLogin\ no/g" /etc/ssh/sshd_config
+
+# Перевіряємо коректність ssh конфігурації
+sshd -T
+
+# Перезапускаємо сервіс sshd
+systemctl restart sshd
+systemctl status sshd
