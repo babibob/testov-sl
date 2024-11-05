@@ -61,7 +61,7 @@ ssh <usrname>@10.200.10.1
 
 # Змінюємо конфігурацію ssh - 
 # Забороняємо логін по паролю
-sed PasswordAuthentication(.+)$
+sed -i "s/PasswordAuthentication(.+)$/PasswordAuthentication\ no/g" /etc/ssh/sshd_config
 
 # Забороняємо логін користувачу root
 sed -i "s/PermitRootLogin(.+)$/PermitRootLogin\ no/g" /etc/ssh/sshd_config
