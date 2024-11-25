@@ -8,6 +8,12 @@
 # Встановлюємо пакети vim та sudo для зручної роботи
 apt update ; apt install -y vim sudo
 
+# При винекненні помилки "apt-listchanges: Can't set locale; make sure $LC_* and $LANG are correct!" виконайте
+
+echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+
 # Встановлюєм vim за замовчування
 update-alternatives --set editor /usr/bin/vim.tiny
 
@@ -45,7 +51,6 @@ ip route show dev enp0s8
 # Якщо помилок немає, то ця нода має доступ к двум мережам: 
 #    - доступ в інтернет, через брідж утворений з вашим фізичним адаптером лаптопа
 #    - доступ до Internal network, який ми вже налаштували
-
 
 #!!!!! Дві команди виконуються на локальній машині для надання ssh доступу !!!!
 # Створюєм пару ключів
